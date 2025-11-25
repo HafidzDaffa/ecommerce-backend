@@ -1,0 +1,1325 @@
+{
+	"info": {
+		"_postman_id": "ecommerce-complete-api-2024",
+		"name": "E-Commerce Complete API",
+		"description": "Complete API collection for E-Commerce Backend including Authentication, Categories, Products, Product Galleries, Shopping Cart, Orders, and Product Ratings with Google Drive integration",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Register User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"seller@example.com\",\n  \"password\": \"password123\",\n  \"full_name\": \"Test Seller\",\n  \"phone_number\": \"081234567890\",\n  \"role_id\": 2\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/register",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "register"]
+						},
+						"description": "Register a new user account. Role IDs: 1=Admin, 2=Seller, 3=Customer"
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.environment.set(\"token\", jsonData.token);",
+									"    pm.environment.set(\"user_id\", jsonData.user.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"seller@example.com\",\n  \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "login"]
+						},
+						"description": "Login with email and password. Returns JWT token which is automatically saved to environment."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Current User",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/auth/me",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "me"]
+						},
+						"description": "Get current authenticated user information"
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/auth/logout",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "logout"]
+						},
+						"description": "Logout and clear session cookie"
+					},
+					"response": []
+				}
+			],
+			"description": "Authentication endpoints for user registration, login, and session management"
+		},
+		{
+			"name": "Categories",
+			"item": [
+				{
+					"name": "Get All Categories",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/categories?is_active=true",
+							"host": ["{{base_url}}"],
+							"path": ["categories"],
+							"query": [
+								{
+									"key": "is_active",
+									"value": "true",
+									"description": "Filter by active status (optional)"
+								}
+							]
+						},
+						"description": "Get all categories with optional filter by active status"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Category by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/categories/1",
+							"host": ["{{base_url}}"],
+							"path": ["categories", "1"]
+						},
+						"description": "Get a single category by its ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Category",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.environment.set(\"category_id\", jsonData.category.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "category_name",
+									"value": "Electronics",
+									"type": "text"
+								},
+								{
+									"key": "slug",
+									"value": "electronics",
+									"type": "text"
+								},
+								{
+									"key": "icon",
+									"value": "📱",
+									"type": "text"
+								},
+								{
+									"key": "is_active",
+									"value": "true",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": [],
+									"description": "Category image file (optional)"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/categories",
+							"host": ["{{base_url}}"],
+							"path": ["categories"]
+						},
+						"description": "Create a new category with optional image upload. Category ID is automatically saved to environment."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Category",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "category_name",
+									"value": "Consumer Electronics",
+									"type": "text"
+								},
+								{
+									"key": "is_active",
+									"value": "true",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": [],
+									"description": "New category image (optional)"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/categories/{{category_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["categories", "{{category_id}}"]
+						},
+						"description": "Update an existing category. All fields are optional."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Category",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/categories/{{category_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["categories", "{{category_id}}"]
+						},
+						"description": "Delete a category permanently"
+					},
+					"response": []
+				}
+			],
+			"description": "Category management endpoints"
+		},
+		{
+			"name": "Products",
+			"item": [
+				{
+					"name": "Get All Products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/products?page=1&limit=10&is_published=true",
+							"host": ["{{base_url}}"],
+							"path": ["products"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number (default: 1)"
+								},
+								{
+									"key": "limit",
+									"value": "10",
+									"description": "Items per page (default: 10, max: 100)"
+								},
+								{
+									"key": "is_published",
+									"value": "true",
+									"description": "Filter by published status (optional)"
+								}
+							]
+						},
+						"description": "Get all products with pagination and optional filters"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Product by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/products/{{product_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["products", "{{product_id}}"]
+						},
+						"description": "Get a single product by its UUID with categories and galleries"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Product by Slug",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/products/slug/smartphone-xyz-pro",
+							"host": ["{{base_url}}"],
+							"path": ["products", "slug", "smartphone-xyz-pro"]
+						},
+						"description": "Get a product by its URL-friendly slug"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Products by Category",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/products/category/{{category_id}}?page=1&limit=10",
+							"host": ["{{base_url}}"],
+							"path": ["products", "category", "{{category_id}}"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number"
+								},
+								{
+									"key": "limit",
+									"value": "10",
+									"description": "Items per page"
+								}
+							]
+						},
+						"description": "Get all published products in a specific category with pagination"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Product",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.environment.set(\"product_id\", jsonData.product.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"product_name\": \"Smartphone XYZ Pro\",\n  \"slug\": \"smartphone-xyz-pro\",\n  \"sku\": \"ELEC-001\",\n  \"price\": 7999000,\n  \"discount_percent\": 10,\n  \"short_description\": \"Latest flagship smartphone\",\n  \"description\": \"High-end smartphone with advanced features, 6.7 inch display, 128GB storage\",\n  \"weight_gram\": 200,\n  \"stock_quantity\": 50,\n  \"is_published\": true,\n  \"category_ids\": [1]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/products",
+							"host": ["{{base_url}}"],
+							"path": ["products"]
+						},
+						"description": "Create a new product with categories. Product ID is automatically saved to environment."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Product",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"product_name\": \"Smartphone XYZ Pro Max\",\n  \"price\": 8999000,\n  \"stock_quantity\": 45,\n  \"is_published\": true,\n  \"category_ids\": [1, 2]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/products/{{product_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["products", "{{product_id}}"]
+						},
+						"description": "Update an existing product. All fields are optional."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Product",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/products/{{product_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["products", "{{product_id}}"]
+						},
+						"description": "Soft delete a product (sets deleted_at timestamp)"
+					},
+					"response": []
+				}
+			],
+			"description": "Product management endpoints"
+		},
+		{
+			"name": "Product Galleries",
+			"item": [
+				{
+					"name": "Get Product Galleries",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/products/{{product_id}}/galleries",
+							"host": ["{{base_url}}"],
+							"path": ["products", "{{product_id}}", "galleries"]
+						},
+						"description": "Get all gallery images for a specific product"
+					},
+					"response": []
+				},
+				{
+					"name": "Upload Product Image",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.environment.set(\"gallery_id\", jsonData.gallery.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "product_id",
+									"value": "{{product_id}}",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": [],
+									"description": "Product image file (required)"
+								},
+								{
+									"key": "display_order",
+									"value": "0",
+									"type": "text",
+									"description": "Display order (default: 0)"
+								},
+								{
+									"key": "is_thumbnail",
+									"value": "true",
+									"type": "text",
+									"description": "Set as thumbnail (default: false)"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/products/galleries",
+							"host": ["{{base_url}}"],
+							"path": ["products", "galleries"]
+						},
+						"description": "Upload and add an image to product gallery. Image is uploaded to Google Drive and returns public URL. Gallery ID is automatically saved to environment."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Product Gallery",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"display_order\": 1,\n  \"is_thumbnail\": false\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/products/galleries/{{gallery_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["products", "galleries", "{{gallery_id}}"]
+						},
+						"description": "Update gallery image metadata (display order and thumbnail status). Does not update the actual image."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Product Gallery",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/products/galleries/{{gallery_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["products", "galleries", "{{gallery_id}}"]
+						},
+						"description": "Delete a gallery image permanently (also deletes from Google Drive)"
+					},
+					"response": []
+				}
+			],
+			"description": "Product gallery management endpoints for image uploads with Google Drive integration"
+		},
+		{
+			"name": "Cart",
+			"item": [
+				{
+					"name": "Add to Cart",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.environment.set(\"cart_id\", jsonData.cart.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"product_id\": \"{{product_id}}\",\n  \"quantity\": 2,\n  \"note\": \"Please pack carefully\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/cart",
+							"host": ["{{base_url}}"],
+							"path": ["cart"]
+						},
+						"description": "Add a product to shopping cart. Cart ID is saved to environment."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Cart",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/cart",
+							"host": ["{{base_url}}"],
+							"path": ["cart"]
+						},
+						"description": "Get user's shopping cart with all items and summary"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Cart Item",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"quantity\": 3,\n  \"note\": \"Updated note\",\n  \"is_selected\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/cart/{{cart_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["cart", "{{cart_id}}"]
+						},
+						"description": "Update cart item quantity, note, or selection status"
+					},
+					"response": []
+				},
+				{
+					"name": "Remove from Cart",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/cart/{{cart_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["cart", "{{cart_id}}"]
+						},
+						"description": "Remove a single item from cart"
+					},
+					"response": []
+				},
+				{
+					"name": "Clear Cart",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/cart/clear",
+							"host": ["{{base_url}}"],
+							"path": ["cart", "clear"]
+						},
+						"description": "Remove all items from cart"
+					},
+					"response": []
+				}
+			],
+			"description": "Shopping cart management endpoints"
+		},
+		{
+			"name": "Orders",
+			"item": [
+				{
+					"name": "Get Order Statuses",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/orders/statuses",
+							"host": ["{{base_url}}"],
+							"path": ["orders", "statuses"]
+						},
+						"description": "Get list of all available order statuses"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Order",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.environment.set(\"order_id\", jsonData.order.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"cart_ids\": [\"{{cart_id}}\"],\n  \"address_line\": \"Jl. Sudirman No. 123\",\n  \"city_id\": 152,\n  \"city_name\": \"Jakarta Selatan\",\n  \"province_id\": 6,\n  \"province_name\": \"DKI Jakarta\",\n  \"subdistrict_id\": 2145,\n  \"subdistrict_name\": \"Kebayoran Baru\",\n  \"postal_code\": \"12190\",\n  \"shipping_courier\": \"JNE\",\n  \"shipping_service\": \"REG\",\n  \"shipping_cost\": 15000\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/orders",
+							"host": ["{{base_url}}"],
+							"path": ["orders"]
+						},
+						"description": "Create a new order from selected cart items. Order ID is saved to environment."
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Orders",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/orders?page=1&per_page=10",
+							"host": ["{{base_url}}"],
+							"path": ["orders"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number"
+								},
+								{
+									"key": "per_page",
+									"value": "10",
+									"description": "Items per page"
+								}
+							]
+						},
+						"description": "Get list of user's orders with pagination"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Order Details",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/orders/{{order_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["orders", "{{order_id}}"]
+						},
+						"description": "Get detailed information about a specific order"
+					},
+					"response": []
+				},
+				{
+					"name": "Cancel Order",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/orders/{{order_id}}/cancel",
+							"host": ["{{base_url}}"],
+							"path": ["orders", "{{order_id}}", "cancel"]
+						},
+						"description": "Cancel a pending order"
+					},
+					"response": []
+				}
+			],
+			"description": "Order management endpoints for customers"
+		},
+		{
+			"name": "Admin Orders",
+			"item": [
+				{
+					"name": "Get All Orders",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/admin/orders?page=1&per_page=10",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "orders"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number"
+								},
+								{
+									"key": "per_page",
+									"value": "10",
+									"description": "Items per page"
+								}
+							]
+						},
+						"description": "Get all orders (admin only) with pagination"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Order Status",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status_id\": 2,\n  \"notes\": \"Order is being processed\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/admin/orders/{{order_id}}/status",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "orders", "{{order_id}}", "status"]
+						},
+						"description": "Update order status (admin only)"
+					},
+					"response": []
+				}
+			],
+			"description": "Admin order management endpoints"
+		},
+		{
+			"name": "Ratings",
+			"item": [
+				{
+					"name": "Create Rating",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.environment.set(\"rating_id\", jsonData.rating.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"product_id\": \"{{product_id}}\",\n  \"order_id\": \"{{order_id}}\",\n  \"rating_value\": 5,\n  \"review_text\": \"Excellent product! Highly recommended.\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/ratings",
+							"host": ["{{base_url}}"],
+							"path": ["ratings"]
+						},
+						"description": "Create a rating/review for a product from a delivered order. Rating ID is saved to environment."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Product Ratings",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/ratings?product_id={{product_id}}&page=1&per_page=10",
+							"host": ["{{base_url}}"],
+							"path": ["ratings"],
+							"query": [
+								{
+									"key": "product_id",
+									"value": "{{product_id}}",
+									"description": "Product ID (required)"
+								},
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number"
+								},
+								{
+									"key": "per_page",
+									"value": "10",
+									"description": "Items per page"
+								}
+							]
+						},
+						"description": "Get all ratings for a specific product with pagination"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Rating Statistics",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/ratings/stats?product_id={{product_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["ratings", "stats"],
+							"query": [
+								{
+									"key": "product_id",
+									"value": "{{product_id}}",
+									"description": "Product ID (required)"
+								}
+							]
+						},
+						"description": "Get rating statistics for a product (average, count, distribution)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Ratings",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/ratings/my?page=1&per_page=10",
+							"host": ["{{base_url}}"],
+							"path": ["ratings", "my"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number"
+								},
+								{
+									"key": "per_page",
+									"value": "10",
+									"description": "Items per page"
+								}
+							]
+						},
+						"description": "Get current user's ratings with pagination"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Rating",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"rating_value\": 4,\n  \"review_text\": \"Good product, but shipping was slow.\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/ratings/{{rating_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["ratings", "{{rating_id}}"]
+						},
+						"description": "Update user's own rating"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Rating",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/ratings/{{rating_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["ratings", "{{rating_id}}"]
+						},
+						"description": "Delete user's own rating"
+					},
+					"response": []
+				}
+			],
+			"description": "Product rating and review endpoints"
+		},
+		{
+			"name": "Payments",
+			"item": [
+				{
+					"name": "Create Payment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.environment.set(\"payment_id\", jsonData.payment.id);",
+									"    if (jsonData.payment.invoice_url) {",
+									"        pm.environment.set(\"payment_invoice_url\", jsonData.payment.invoice_url);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"order_id\": \"{{order_id}}\",\n  \"payment_method\": \"BANK_TRANSFER\",\n  \"success_redirect_url\": \"https://yourapp.com/payment/success\",\n  \"failure_redirect_url\": \"https://yourapp.com/payment/failed\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/payments",
+							"host": ["{{base_url}}"],
+							"path": ["payments"]
+						},
+						"description": "Create payment for an order using Xendit. Payment ID and invoice URL are saved to environment."
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Payments",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/payments?page=1&per_page=10",
+							"host": ["{{base_url}}"],
+							"path": ["payments"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number"
+								},
+								{
+									"key": "per_page",
+									"value": "10",
+									"description": "Items per page"
+								}
+							]
+						},
+						"description": "Get list of user's payments with pagination"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Payment by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/payments/{{payment_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["payments", "{{payment_id}}"]
+						},
+						"description": "Get detailed information about a specific payment"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Payment by Order ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/payments/order?order_id={{order_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["payments", "order"],
+							"query": [
+								{
+									"key": "order_id",
+									"value": "{{order_id}}",
+									"description": "Order ID (required)"
+								}
+							]
+						},
+						"description": "Get payment information for a specific order"
+					},
+					"response": []
+				},
+				{
+					"name": "Check Payment Status",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/payments/{{payment_id}}/status",
+							"host": ["{{base_url}}"],
+							"path": ["payments", "{{payment_id}}", "status"]
+						},
+						"description": "Check the current status of a payment from Xendit"
+					},
+					"response": []
+				},
+				{
+					"name": "Cancel Payment",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/payments/{{payment_id}}/cancel",
+							"host": ["{{base_url}}"],
+							"path": ["payments", "{{payment_id}}", "cancel"]
+						},
+						"description": "Cancel a pending payment transaction"
+					},
+					"response": []
+				},
+				{
+					"name": "Xendit Webhook Callback",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": \"xendit-invoice-id\",\n  \"external_id\": \"ORDER-uuid-timestamp\",\n  \"user_id\": \"xendit-user-id\",\n  \"status\": \"PAID\",\n  \"merchant_name\": \"Your Store\",\n  \"amount\": 100000,\n  \"paid_amount\": 100000,\n  \"bank_code\": \"BCA\",\n  \"paid_at\": \"2024-11-24T10:00:00.000Z\",\n  \"payer_email\": \"customer@example.com\",\n  \"description\": \"Payment for Order\",\n  \"adjusted_received_amount\": 100000,\n  \"fees_paid_amount\": 0,\n  \"updated\": \"2024-11-24T10:00:00.000Z\",\n  \"created\": \"2024-11-24T09:00:00.000Z\",\n  \"currency\": \"IDR\",\n  \"payment_channel\": \"BCA\",\n  \"payment_method\": \"BANK_TRANSFER\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/payments/xendit/callback",
+							"host": ["{{base_url}}"],
+							"path": ["payments", "xendit", "callback"]
+						},
+						"description": "Webhook endpoint for Xendit payment notifications (should be called by Xendit, not manually)"
+					},
+					"response": []
+				}
+			],
+			"description": "Payment management endpoints integrated with Xendit payment gateway"
+		},
+		{
+			"name": "Admin Payments",
+			"item": [
+				{
+					"name": "Get All Payments",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/admin/payments?page=1&per_page=10",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "payments"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number"
+								},
+								{
+									"key": "per_page",
+									"value": "10",
+									"description": "Items per page"
+								}
+							]
+						},
+						"description": "Get all payments (admin only) with pagination"
+					},
+					"response": []
+				}
+			],
+			"description": "Admin payment management endpoints"
+		},
+		{
+			"name": "Health Check",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/../health",
+					"host": ["{{base_url}}"],
+					"path": ["..", "health"]
+				},
+				"description": "Check if the server is running"
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080/api/v1",
+			"type": "string"
+		}
+	]
+}

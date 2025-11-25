@@ -1,0 +1,2060 @@
+basePath: /api/v1
+definitions:
+  ecommerce-backend_internal_core_domain.AddToCartRequest:
+    properties:
+      note:
+        type: string
+      product_id:
+        type: string
+      quantity:
+        minimum: 1
+        type: integer
+    required:
+    - product_id
+    - quantity
+    type: object
+  ecommerce-backend_internal_core_domain.CartResponse:
+    properties:
+      id:
+        type: string
+      is_selected:
+        type: boolean
+      note:
+        type: string
+      product:
+        $ref: '#/definitions/ecommerce-backend_internal_core_domain.Product'
+      product_id:
+        type: string
+      quantity:
+        type: integer
+      subtotal:
+        type: number
+    type: object
+  ecommerce-backend_internal_core_domain.CartSummary:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/ecommerce-backend_internal_core_domain.CartResponse'
+        type: array
+      selected_amount:
+        type: number
+      selected_items:
+        type: integer
+      total_amount:
+        type: number
+      total_items:
+        type: integer
+    type: object
+  ecommerce-backend_internal_core_domain.Category:
+    properties:
+      category_name:
+        type: string
+      created_at:
+        type: string
+      icon:
+        type: string
+      id:
+        type: integer
+      image_path:
+        type: string
+      is_active:
+        type: boolean
+      slug:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  ecommerce-backend_internal_core_domain.CreateOrderRequest:
+    properties:
+      address_line:
+        type: string
+      cart_ids:
+        items:
+          type: string
+        minItems: 1
+        type: array
+      city_id:
+        type: integer
+      city_name:
+        type: string
+      postal_code:
+        type: string
+      province_id:
+        type: integer
+      province_name:
+        type: string
+      shipping_cost:
+        minimum: 0
+        type: number
+      shipping_courier:
+        type: string
+      shipping_service:
+        type: string
+      subdistrict_id:
+        type: integer
+      subdistrict_name:
+        type: string
+    required:
+    - address_line
+    - cart_ids
+    - city_id
+    - city_name
+    - postal_code
+    - province_id
+    - province_name
+    - shipping_cost
+    type: object
+  ecommerce-backend_internal_core_domain.CreatePaymentRequest:
+    properties:
+      failure_redirect_url:
+        type: string
+      order_id:
+        type: string
+      payment_method:
+        type: string
+      success_redirect_url:
+        type: string
+    required:
+    - order_id
+    - payment_method
+    type: object
+  ecommerce-backend_internal_core_domain.CreateProductRequest:
+    properties:
+      category_ids:
+        items:
+          type: integer
+        type: array
+      description:
+        type: string
+      discount_percent:
+        maximum: 100
+        minimum: 0
+        type: integer
+      is_published:
+        type: boolean
+      price:
+        minimum: 0
+        type: number
+      product_name:
+        maxLength: 255
+        minLength: 2
+        type: string
+      short_description:
+        maxLength: 500
+        type: string
+      sku:
+        maxLength: 100
+        type: string
+      slug:
+        maxLength: 255
+        type: string
+      stock_quantity:
+        minimum: 0
+        type: integer
+      weight_gram:
+        minimum: 0
+        type: integer
+    required:
+    - price
+    - product_name
+    - slug
+    - stock_quantity
+    - weight_gram
+    type: object
+  ecommerce-backend_internal_core_domain.CreateRatingRequest:
+    properties:
+      comment:
+        type: string
+      order_id:
+        type: string
+      product_id:
+        type: string
+      rating:
+        maximum: 5
+        minimum: 1
+        type: integer
+    required:
+    - order_id
+    - product_id
+    - rating
+    type: object
+  ecommerce-backend_internal_core_domain.LoginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  ecommerce-backend_internal_core_domain.LoginResponse:
+    properties:
+      token:
+        type: string
+      user:
+        $ref: '#/definitions/ecommerce-backend_internal_core_domain.User'
+    type: object
+  ecommerce-backend_internal_core_domain.Order:
+    properties:
+      address_line:
+        type: string
+      approved_at:
+        type: string
+      city_id:
+        type: integer
+      city_name:
+        type: string
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      delivered_at:
+        type: string
+      id:
+        type: string
+      items:
+        items:
+          $ref: '#/definitions/ecommerce-backend_internal_core_domain.OrderItem'
+        type: array
+      order_status:
+        $ref: '#/definitions/ecommerce-backend_internal_core_domain.OrderStatus'
+      order_status_id:
+        type: integer
+      postal_code:
+        type: string
+      product_total:
+        type: number
+      province_id:
+        type: integer
+      province_name:
+        type: string
+      shipping_cost:
+        type: number
+      shipping_courier:
+        type: string
+      shipping_service:
+        type: string
+      subdistrict_id:
+        type: integer
+      subdistrict_name:
+        type: string
+      total_amount:
+        type: number
+      tracking_number:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: string
+    type: object
+  ecommerce-backend_internal_core_domain.OrderItem:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      note:
+        type: string
+      order_id:
+        type: string
+      price:
+        type: number
+      product:
+        $ref: '#/definitions/ecommerce-backend_internal_core_domain.Product'
+      product_id:
+        type: string
+      quantity:
+        type: integer
+    type: object
+  ecommerce-backend_internal_core_domain.OrderListResponse:
+    properties:
+      orders:
+        items:
+          $ref: '#/definitions/ecommerce-backend_internal_core_domain.Order'
+        type: array
+      page:
+        type: integer
+      per_page:
+        type: integer
+      total:
+        type: integer
+      total_pages:
+        type: integer
+    type: object
+  ecommerce-backend_internal_core_domain.OrderStatus:
+    properties:
+      color:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: integer
+      slug:
+        type: string
+      status_name:
+        type: string
+    type: object
+  ecommerce-backend_internal_core_domain.PaymentListResponse:
+    properties:
+      page:
+        type: integer
+      payments:
+        items:
+          $ref: '#/definitions/ecommerce-backend_internal_core_domain.PaymentTransaction'
+        type: array
+      per_page:
+        type: integer
+      total:
+        type: integer
+      total_pages:
+        type: integer
+    type: object
+  ecommerce-backend_internal_core_domain.PaymentResponse:
+    properties:
+      amount:
+        type: number
+      checkout_url:
+        type: string
+      created_at:
+        type: string
+      expired_at:
+        type: string
+      id:
+        type: string
+      invoice_url:
+        type: string
+      order_id:
+        type: string
+      payment_status:
+        $ref: '#/definitions/ecommerce-backend_internal_core_domain.PaymentStatus'
+      total_amount:
+        type: number
+      xendit_external_id:
+        type: string
+    type: object
+  ecommerce-backend_internal_core_domain.PaymentStatus:
+    enum:
+    - PENDING
+    - PAID
+    - EXPIRED
+    - FAILED
+    - CANCELLED
+    type: string
+    x-enum-varnames:
+    - PaymentStatusPending
+    - PaymentStatusPaid
+    - PaymentStatusExpired
+    - PaymentStatusFailed
+    - PaymentStatusCancelled
+  ecommerce-backend_internal_core_domain.PaymentTransaction:
+    properties:
+      admin_fee:
+        type: number
+      amount:
+        type: number
+      checkout_url:
+        type: string
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      description:
+        type: string
+      expired_at:
+        type: string
+      id:
+        type: string
+      invoice_url:
+        type: string
+      order:
+        $ref: '#/definitions/ecommerce-backend_internal_core_domain.Order'
+      order_id:
+        type: string
+      paid_amount:
+        type: number
+      paid_at:
+        type: string
+      payment_channel:
+        type: string
+      payment_details: {}
+      payment_method:
+        type: string
+      payment_status:
+        $ref: '#/definitions/ecommerce-backend_internal_core_domain.PaymentStatus'
+      total_amount:
+        type: number
+      updated_at:
+        type: string
+      user_id:
+        type: string
+      xendit_external_id:
+        type: string
+      xendit_invoice_id:
+        type: string
+      xendit_response: {}
+    type: object
+  ecommerce-backend_internal_core_domain.Product:
+    properties:
+      categories:
+        items:
+          $ref: '#/definitions/ecommerce-backend_internal_core_domain.Category'
+        type: array
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      description:
+        type: string
+      discount_percent:
+        type: integer
+      galleries:
+        items:
+          $ref: '#/definitions/ecommerce-backend_internal_core_domain.ProductGallery'
+        type: array
+      id:
+        type: string
+      is_published:
+        type: boolean
+      price:
+        type: number
+      product_name:
+        type: string
+      short_description:
+        type: string
+      sku:
+        type: string
+      slug:
+        type: string
+      stock_quantity:
+        type: integer
+      updated_at:
+        type: string
+      user_id:
+        type: string
+      weight_gram:
+        type: integer
+    type: object
+  ecommerce-backend_internal_core_domain.ProductGallery:
+    properties:
+      created_at:
+        type: string
+      display_order:
+        type: integer
+      id:
+        type: string
+      image_path:
+        type: string
+      is_thumbnail:
+        type: boolean
+      product_id:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  ecommerce-backend_internal_core_domain.ProductRatingStats:
+    properties:
+      average_rating:
+        type: number
+      product_id:
+        type: string
+      rating_1_count:
+        type: integer
+      rating_2_count:
+        type: integer
+      rating_3_count:
+        type: integer
+      rating_4_count:
+        type: integer
+      rating_5_count:
+        type: integer
+      total_ratings:
+        type: integer
+    type: object
+  ecommerce-backend_internal_core_domain.RegisterRequest:
+    properties:
+      email:
+        type: string
+      full_name:
+        type: string
+      password:
+        minLength: 6
+        type: string
+      phone_number:
+        type: string
+      role_id:
+        maximum: 3
+        minimum: 1
+        type: integer
+    required:
+    - email
+    - password
+    - role_id
+    type: object
+  ecommerce-backend_internal_core_domain.UpdateCartRequest:
+    properties:
+      is_selected:
+        type: boolean
+      note:
+        type: string
+      quantity:
+        minimum: 1
+        type: integer
+    type: object
+  ecommerce-backend_internal_core_domain.UpdateOrderStatusRequest:
+    properties:
+      order_status_id:
+        type: integer
+      tracking_number:
+        type: string
+    required:
+    - order_status_id
+    type: object
+  ecommerce-backend_internal_core_domain.UpdateProductGalleryRequest:
+    properties:
+      display_order:
+        minimum: 0
+        type: integer
+      is_thumbnail:
+        type: boolean
+    type: object
+  ecommerce-backend_internal_core_domain.UpdateProductRequest:
+    properties:
+      category_ids:
+        items:
+          type: integer
+        type: array
+      description:
+        type: string
+      discount_percent:
+        maximum: 100
+        minimum: 0
+        type: integer
+      is_published:
+        type: boolean
+      price:
+        minimum: 0
+        type: number
+      product_name:
+        maxLength: 255
+        minLength: 2
+        type: string
+      short_description:
+        maxLength: 500
+        type: string
+      sku:
+        maxLength: 100
+        type: string
+      slug:
+        maxLength: 255
+        type: string
+      stock_quantity:
+        minimum: 0
+        type: integer
+      weight_gram:
+        minimum: 0
+        type: integer
+    type: object
+  ecommerce-backend_internal_core_domain.UpdateRatingRequest:
+    properties:
+      comment:
+        type: string
+      rating:
+        maximum: 5
+        minimum: 1
+        type: integer
+    type: object
+  ecommerce-backend_internal_core_domain.User:
+    properties:
+      avatar_url:
+        type: string
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      email:
+        type: string
+      full_name:
+        type: string
+      id:
+        type: string
+      is_active:
+        type: boolean
+      is_email_verified:
+        type: boolean
+      last_login_at:
+        type: string
+      phone_number:
+        type: string
+      role_id:
+        type: integer
+      updated_at:
+        type: string
+    type: object
+  ecommerce-backend_internal_core_domain.XenditCallbackPayload:
+    properties:
+      adjusted_received_amount:
+        type: number
+      amount:
+        type: number
+      bank_code:
+        type: string
+      created:
+        type: string
+      currency:
+        type: string
+      description:
+        type: string
+      external_id:
+        type: string
+      fees_paid_amount:
+        type: number
+      id:
+        type: string
+      merchant_name:
+        type: string
+      paid_amount:
+        type: number
+      paid_at:
+        type: string
+      payer_email:
+        type: string
+      payment_channel:
+        type: string
+      payment_method:
+        type: string
+      status:
+        type: string
+      updated:
+        type: string
+      user_id:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: support@ecommerce.com
+    name: API Support
+  description: Complete e-commerce backend server with authentication, product management,
+    category management, and Google Drive integration.
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  termsOfService: http://swagger.io/terms/
+  title: E-Commerce Backend API
+  version: "1.0"
+paths:
+  /admin/orders:
+    get:
+      description: Retrieve all orders with pagination - admin only
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Items per page
+        in: query
+        name: per_page
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Orders retrieved successfully
+          schema:
+            $ref: '#/definitions/ecommerce-backend_internal_core_domain.OrderListResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get all orders (Admin only)
+      tags:
+      - Orders
+  /admin/orders/{id}/status:
+    put:
+      consumes:
+      - application/json
+      description: Update order status and tracking number - admin only
+      parameters:
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update Order Status Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/ecommerce-backend_internal_core_domain.UpdateOrderStatusRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Order status updated
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Update order status (Admin only)
+      tags:
+      - Orders
+  /admin/payments:
+    get:
+      description: Retrieve all payments with pagination - admin only
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Items per page
+        in: query
+        name: per_page
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Payments retrieved successfully
+          schema:
+            $ref: '#/definitions/ecommerce-backend_internal_core_domain.PaymentListResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get all payments (Admin only)
+      tags:
+      - Payments
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate user with email and password, returns JWT token and
+        sets session cookie (24 hours)
+      parameters:
+      - description: Login Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/ecommerce-backend_internal_core_domain.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Login successful
+          schema:
+            $ref: '#/definitions/ecommerce-backend_internal_core_domain.LoginResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Login user
+      tags:
+      - Authentication
+  /auth/logout:
+    post:
+      description: Clear the session cookie
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Logout successful
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Logout user
+      tags:
+      - Authentication
+  /auth/me:
+    get:
+      description: Get current authenticated user information
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Current user info
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get current user
+      tags:
+      - Authentication
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Register a new user account with email, password, and role
+      parameters:
+      - description: Registration Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/ecommerce-backend_internal_core_domain.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: User registered successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Register a new user
+      tags:
+      - Authentication
+  /cart:
+    get:
+      description: Retrieve user's shopping cart with all items and summary
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Cart retrieved successfully
+          schema:
+            $ref: '#/definitions/ecommerce-backend_internal_core_domain.CartSummary'
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get user's cart
+      tags:
+      - Cart
+    post:
+      consumes:
+      - application/json
+      description: Add a product to user's shopping cart
+      parameters:
+      - description: Add to Cart Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/ecommerce-backend_internal_core_domain.AddToCartRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Product added to cart
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Add product to cart
+      tags:
+      - Cart
+  /cart/{id}:
+    delete:
+      description: Remove a specific item from user's cart
+      parameters:
+      - description: Cart Item ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: Item removed from cart
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Remove item from cart
+      tags:
+      - Cart
+    put:
+      consumes:
+      - application/json
+      description: Update quantity, note, or selection status of a cart item
+      parameters:
+      - description: Cart Item ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update Cart Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/ecommerce-backend_internal_core_domain.UpdateCartRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Cart item updated
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Update cart item
+      tags:
+      - Cart
+  /cart/clear:
+    delete:
+      description: Remove all items from user's cart
+      responses:
+        "200":
+          description: Cart cleared
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Clear cart
+      tags:
+      - Cart
+  /categories:
+    get:
+      description: Get all categories with optional filter by active status
+      parameters:
+      - description: Filter by active status
+        in: query
+        name: is_active
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of categories
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get all categories
+      tags:
+      - Categories
+    post:
+      consumes:
+      - multipart/form-data
+      description: Create a new product category with optional image upload
+      parameters:
+      - description: Category Name
+        in: formData
+        name: category_name
+        required: true
+        type: string
+      - description: Category Slug
+        in: formData
+        name: slug
+        type: string
+      - description: Category Icon
+        in: formData
+        name: icon
+        type: string
+      - description: Is Active
+        in: formData
+        name: is_active
+        type: boolean
+      - description: Category Image
+        in: formData
+        name: image
+        type: file
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Category created successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Create a new category
+      tags:
+      - Categories
+  /categories/{id}:
+    delete:
+      description: Delete a category by its ID
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Category deleted successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Delete category
+      tags:
+      - Categories
+    get:
+      description: Get a single category by its ID
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Category details
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Category not found
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get category by ID
+      tags:
+      - Categories
+    put:
+      consumes:
+      - multipart/form-data
+      description: Update an existing category
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Category Name
+        in: formData
+        name: category_name
+        type: string
+      - description: Category Slug
+        in: formData
+        name: slug
+        type: string
+      - description: Category Icon
+        in: formData
+        name: icon
+        type: string
+      - description: Is Active
+        in: formData
+        name: is_active
+        type: boolean
+      - description: Category Image
+        in: formData
+        name: image
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Category updated successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Update category
+      tags:
+      - Categories
+  /orders:
+    get:
+      description: Retrieve list of user's orders with pagination
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Items per page
+        in: query
+        name: per_page
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Orders retrieved successfully
+          schema:
+            $ref: '#/definitions/ecommerce-backend_internal_core_domain.OrderListResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get user's orders
+      tags:
+      - Orders
+    post:
+      consumes:
+      - application/json
+      description: Create a new order from selected cart items
+      parameters:
+      - description: Create Order Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/ecommerce-backend_internal_core_domain.CreateOrderRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Order created successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Create new order
+      tags:
+      - Orders
+  /orders/{id}:
+    get:
+      description: Retrieve detailed information about a specific order
+      parameters:
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Order retrieved successfully
+          schema:
+            $ref: '#/definitions/ecommerce-backend_internal_core_domain.Order'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get order details
+      tags:
+      - Orders
+  /orders/{id}/cancel:
+    post:
+      description: Cancel an order (only if not yet processed)
+      parameters:
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: Order cancelled
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Cancel order
+      tags:
+      - Orders
+  /orders/statuses:
+    get:
+      description: Retrieve all available order statuses
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Order statuses retrieved
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get order statuses
+      tags:
+      - Orders
+  /payments:
+    get:
+      description: Retrieve list of user's payments with pagination
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Items per page
+        in: query
+        name: per_page
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Payments retrieved successfully
+          schema:
+            $ref: '#/definitions/ecommerce-backend_internal_core_domain.PaymentListResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get user's payments
+      tags:
+      - Payments
+    post:
+      consumes:
+      - application/json
+      description: Create a payment transaction using Xendit payment gateway
+      parameters:
+      - description: Create Payment Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/ecommerce-backend_internal_core_domain.CreatePaymentRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Payment created successfully
+          schema:
+            $ref: '#/definitions/ecommerce-backend_internal_core_domain.PaymentResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Create payment for an order
+      tags:
+      - Payments
+  /payments/{id}:
+    get:
+      description: Get detailed information about a specific payment
+      parameters:
+      - description: Payment ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Payment retrieved successfully
+          schema:
+            $ref: '#/definitions/ecommerce-backend_internal_core_domain.PaymentTransaction'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get payment details
+      tags:
+      - Payments
+  /payments/{id}/cancel:
+    post:
+      description: Cancel a pending payment transaction
+      parameters:
+      - description: Payment ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Payment cancelled successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Cancel payment
+      tags:
+      - Payments
+  /payments/{id}/status:
+    get:
+      description: Check the current status of a payment from Xendit
+      parameters:
+      - description: Payment ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Payment status retrieved
+          schema:
+            $ref: '#/definitions/ecommerce-backend_internal_core_domain.PaymentTransaction'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Check payment status
+      tags:
+      - Payments
+  /payments/order:
+    get:
+      description: Get payment information for a specific order
+      parameters:
+      - description: Order ID
+        in: query
+        name: order_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Payment retrieved successfully
+          schema:
+            $ref: '#/definitions/ecommerce-backend_internal_core_domain.PaymentTransaction'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get payment by order ID
+      tags:
+      - Payments
+  /payments/xendit/callback:
+    post:
+      consumes:
+      - application/json
+      description: Webhook endpoint for Xendit payment notifications
+      parameters:
+      - description: Xendit Callback Payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/ecommerce-backend_internal_core_domain.XenditCallbackPayload'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Callback processed successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Xendit payment callback
+      tags:
+      - Payments
+  /products:
+    get:
+      description: Get all products with pagination
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Items per page
+        in: query
+        name: limit
+        type: integer
+      - description: Filter by published status
+        in: query
+        name: is_published
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of products
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get all products
+      tags:
+      - Products
+    post:
+      consumes:
+      - application/json
+      description: Create a new product with categories
+      parameters:
+      - description: Product Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/ecommerce-backend_internal_core_domain.CreateProductRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Product created successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Create a new product
+      tags:
+      - Products
+  /products/{id}:
+    delete:
+      description: Soft delete a product by its ID
+      parameters:
+      - description: Product ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Product deleted successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Delete product
+      tags:
+      - Products
+    get:
+      description: Get a single product by its ID with categories and galleries
+      parameters:
+      - description: Product ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Product details
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Product not found
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get product by ID
+      tags:
+      - Products
+    put:
+      consumes:
+      - application/json
+      description: Update an existing product
+      parameters:
+      - description: Product ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Product Update Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/ecommerce-backend_internal_core_domain.UpdateProductRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Product updated successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Update product
+      tags:
+      - Products
+  /products/{product_id}/galleries:
+    get:
+      description: Get all gallery images for a specific product
+      parameters:
+      - description: Product ID (UUID)
+        in: path
+        name: product_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of gallery images
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get product galleries
+      tags:
+      - Product Galleries
+  /products/category/{category_id}:
+    get:
+      description: Get all published products in a specific category with pagination
+      parameters:
+      - description: Category ID
+        in: path
+        name: category_id
+        required: true
+        type: integer
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of products
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get products by category ID
+      tags:
+      - Products
+  /products/galleries:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Upload and add an image to product gallery
+      parameters:
+      - description: Product ID (UUID)
+        in: formData
+        name: product_id
+        required: true
+        type: string
+      - default: 0
+        description: Display Order
+        in: formData
+        name: display_order
+        type: integer
+      - default: false
+        description: Is Thumbnail
+        in: formData
+        name: is_thumbnail
+        type: boolean
+      - description: Product Image
+        in: formData
+        name: image
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Gallery image added successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Add product gallery image
+      tags:
+      - Product Galleries
+  /products/galleries/{id}:
+    delete:
+      description: Delete a gallery image by its ID
+      parameters:
+      - description: Gallery ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Gallery deleted successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Delete product gallery
+      tags:
+      - Product Galleries
+    put:
+      consumes:
+      - application/json
+      description: Update gallery image display order or thumbnail status
+      parameters:
+      - description: Gallery ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Gallery Update Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/ecommerce-backend_internal_core_domain.UpdateProductGalleryRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Gallery updated successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Update product gallery
+      tags:
+      - Product Galleries
+  /products/slug/{slug}:
+    get:
+      description: Get a single product by its slug with categories and galleries
+      parameters:
+      - description: Product Slug
+        in: path
+        name: slug
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Product details
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Product not found
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get product by slug
+      tags:
+      - Products
+  /ratings:
+    get:
+      description: Retrieve all ratings for a specific product with pagination
+      parameters:
+      - description: Product ID
+        in: query
+        name: product_id
+        required: true
+        type: string
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Items per page
+        in: query
+        name: per_page
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Ratings retrieved successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get product ratings
+      tags:
+      - Ratings
+    post:
+      consumes:
+      - application/json
+      description: Create a rating/review for a product from a delivered order
+      parameters:
+      - description: Create Rating Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/ecommerce-backend_internal_core_domain.CreateRatingRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Rating created successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Create product rating
+      tags:
+      - Ratings
+  /ratings/{id}:
+    delete:
+      description: Delete user's rating
+      parameters:
+      - description: Rating ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: Rating deleted successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Delete rating
+      tags:
+      - Ratings
+    put:
+      consumes:
+      - application/json
+      description: Update user's existing rating
+      parameters:
+      - description: Rating ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update Rating Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/ecommerce-backend_internal_core_domain.UpdateRatingRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Rating updated successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Update rating
+      tags:
+      - Ratings
+  /ratings/my:
+    get:
+      description: Retrieve all ratings created by the authenticated user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Ratings retrieved successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get user's ratings
+      tags:
+      - Ratings
+  /ratings/stats:
+    get:
+      description: Retrieve rating statistics for a product (average, count by stars)
+      parameters:
+      - description: Product ID
+        in: query
+        name: product_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Rating statistics retrieved
+          schema:
+            $ref: '#/definitions/ecommerce-backend_internal_core_domain.ProductRatingStats'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get product rating statistics
+      tags:
+      - Ratings
+schemes:
+- http
+- https
+securityDefinitions:
+  BearerAuth:
+    description: Type "Bearer" followed by a space and JWT token.
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

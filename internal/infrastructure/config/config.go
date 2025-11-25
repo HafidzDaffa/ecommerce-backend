@@ -11,9 +11,13 @@ import (
 )
 
 type Config struct {
-	App      AppConfig
-	Database DatabaseConfig
-	CORS     CORSConfig
+	App         AppConfig
+	Database    DatabaseConfig
+	CORS        CORSConfig
+	JWT         JWTConfig
+	GoogleDrive GoogleDriveConfig
+	Storage     StorageConfig
+	Xendit      XenditConfig
 }
 
 type AppConfig struct {
@@ -37,6 +41,25 @@ type DatabaseConfig struct {
 
 type CORSConfig struct {
 	AllowedOrigins []string
+}
+
+type JWTConfig struct {
+	Secret     string
+	Expiration time.Duration
+}
+
+type GoogleDriveConfig struct {
+	CredentialsPath string
+	FolderID        string
+}
+
+type StorageConfig struct {
+	Type string
+}
+
+type XenditConfig struct {
+	APIKey        string
+	CallbackToken string
 }
 
 func Load() *Config {
@@ -64,6 +87,21 @@ func Load() *Config {
 		},
 		CORS: CORSConfig{
 			AllowedOrigins: getEnvAsSlice("CORS_ALLOWED_ORIGINS", []string{"*"}),
+		},
+		JWT: JWTConfig{
+			Secret:     getEnv("JWT_SECRET", ""),
+			Expiration: getEnvAsDuration("JWT_EXPIRATION", 24*time.Hour),
+		},
+		GoogleDrive: GoogleDriveConfig{
+			CredentialsPath: getEnv("GOOGLE_DRIVE_CREDENTIALS_PATH", "./credentials.json"),
+			FolderID:        getEnv("GOOGLE_DRIVE_FOLDER_ID", ""),
+		},
+		Storage: StorageConfig{
+			Type: getEnv("STORAGE_TYPE", "local"),
+		},
+		Xendit: XenditConfig{
+			APIKey:        getEnv("XENDIT_API_KEY", ""),
+			CallbackToken: getEnv("XENDIT_CALLBACK_TOKEN", ""),
 		},
 	}
 }
