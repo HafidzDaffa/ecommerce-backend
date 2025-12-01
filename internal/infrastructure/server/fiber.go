@@ -59,6 +59,7 @@ func setupRoutes(app *fiber.App, cfg *config.Config, db *sqlx.DB) {
 	orderRepo := repository.NewOrderRepository(db)
 	ratingRepo := repository.NewRatingRepository(db)
 	paymentRepo := repository.NewPaymentRepository(db)
+	applicationFeeRepo := repository.NewApplicationFeeRepository(db)
 	
 	jwtService := auth.NewJWTService(cfg)
 	
@@ -80,6 +81,7 @@ func setupRoutes(app *fiber.App, cfg *config.Config, db *sqlx.DB) {
 	orderService := services.NewOrderService(orderRepo, cartRepo, productRepo)
 	ratingService := services.NewRatingService(ratingRepo, orderRepo, productRepo, userRepo)
 	paymentService := services.NewPaymentService(paymentRepo, orderRepo, userRepo, cfg.Xendit.APIKey)
+	applicationFeeService := services.NewApplicationFeeService(applicationFeeRepo)
 	
 	authHandler := http.NewAuthHandler(authService)
 	categoryHandler := http.NewCategoryHandler(categoryService)
@@ -88,6 +90,7 @@ func setupRoutes(app *fiber.App, cfg *config.Config, db *sqlx.DB) {
 	orderHandler := http.NewOrderHandler(orderService)
 	ratingHandler := http.NewRatingHandler(ratingService)
 	paymentHandler := http.NewPaymentHandler(paymentService)
+	applicationFeeHandler := http.NewApplicationFeeHandler(applicationFeeService)
 
 	api := app.Group("/api")
 	
@@ -172,6 +175,19 @@ func setupRoutes(app *fiber.App, cfg *config.Config, db *sqlx.DB) {
 
 	adminPaymentRoutes := v1.Group("/admin/payments", middleware.AuthMiddleware(jwtService))
 	adminPaymentRoutes.Get("/", paymentHandler.GetAllPayments)
+
+	// Application Fee Routes
+	applicationFeeRoutes := v1.Group("/application-fees")
+	applicationFeeRoutes.Get("/", applicationFeeHandler.GetAllApplicationFees)
+	applicationFeeRoutes.Get("/active", applicationFeeHandler.GetActiveByType)
+	applicationFeeRoutes.Get("/:id", applicationFeeHandler.GetApplicationFeeByID)
+	applicationFeeRoutes.Post("/calculate", applicationFeeHandler.CalculateFee)
+
+	// Admin only routes for application fees
+	adminFeeRoutes := v1.Group("/application-fees", middleware.AuthMiddleware(jwtService))
+	adminFeeRoutes.Post("/", applicationFeeHandler.CreateApplicationFee)
+	adminFeeRoutes.Put("/:id", applicationFeeHandler.UpdateApplicationFee)
+	adminFeeRoutes.Delete("/:id", applicationFeeHandler.DeleteApplicationFee)
 
 	app.Get("/swagger/*", fiberSwagger.WrapHandler)
 }

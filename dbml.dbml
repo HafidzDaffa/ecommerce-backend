@@ -164,3 +164,45 @@ Table product_ratings {
     (product_id, user_id, order_id) [unique]
   }
 }
+
+// 6. APPLICATION FEES (Admin Configuration)
+Table application_fees {
+  id uuid [pk, default: `gen_random_uuid()`]
+  fee_name varchar [not null]
+  fee_type varchar [not null, note: 'PERCENTAGE or FIXED']
+  fee_value decimal(15, 2) [not null]
+  description text
+  is_active boolean [default: true]
+  created_by uuid [ref: > users.id]
+  created_at timestamp [default: `now()`]
+  updated_at timestamp
+  deleted_at timestamp
+}
+
+// 7. PAYMENT TRANSACTIONS
+Table payment_transactions {
+  id uuid [pk, default: `gen_random_uuid()`]
+  order_id uuid [ref: > orders.id, not null]
+  user_id uuid [ref: > users.id, not null]
+  application_fee_id uuid [ref: > application_fees.id]
+  xendit_invoice_id varchar [unique]
+  xendit_external_id varchar [unique, not null]
+  payment_method varchar
+  payment_channel varchar
+  payment_status varchar [not null, default: 'PENDING', note: 'PENDING, PAID, EXPIRED, FAILED, CANCELLED']
+  amount decimal(15, 2) [not null]
+  paid_amount decimal(15, 2) [default: 0]
+  admin_fee decimal(15, 2) [default: 0]
+  application_fee_amount decimal(15, 2) [default: 0]
+  total_amount decimal(15, 2) [not null]
+  invoice_url text
+  checkout_url text
+  paid_at timestamp
+  expired_at timestamp
+  description text
+  payment_details jsonb
+  xendit_response jsonb
+  created_at timestamp [default: `now()`]
+  updated_at timestamp
+  deleted_at timestamp
+}
