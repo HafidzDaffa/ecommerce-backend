@@ -1,0 +1,49 @@
+// E-commerce Database Schema
+// Created: 2026-01-05
+
+Table roles {
+  id int [pk, increment]
+  name varchar(50) [unique, not null]
+  description varchar(255)
+  created_at timestamp [default: `now()`]
+  updated_at timestamp [default: `now()`]
+
+  Indexes {
+    (name) [name: 'idx_roles_name']
+  }
+}
+
+Table users {
+  id bigint [pk, increment]
+  email varchar(255) [unique, not null]
+  password_hash varchar(255) [not null]
+  full_name varchar(255) [not null]
+  phone varchar(20)
+  avatar_url varchar(500)
+  gender enum
+  date_of_birth date
+  is_active boolean [default: true]
+  is_verified boolean [default: false]
+  verification_token varchar(255)
+  role_id int [ref: > roles.id, note: 'Foreign key to roles table']
+  reset_password_token varchar(255)
+  reset_password_expires datetime
+  last_login_at timestamp
+  created_at timestamp [default: `now()`]
+  updated_at timestamp [default: `now()`]
+  deleted_at timestamp
+
+  Indexes {
+    (email) [name: 'idx_users_email']
+    (phone) [name: 'idx_users_phone']
+    (is_active) [name: 'idx_users_is_active']
+    (is_verified) [name: 'idx_users_is_verified']
+    (created_at) [name: 'idx_users_created_at']
+  }
+}
+
+Enum gender {
+  male
+  female
+  other
+}
