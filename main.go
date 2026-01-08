@@ -37,14 +37,6 @@ func main() {
 		log.Fatalf("Failed to initialize database: %v", err)
 	}
 
-	if err := database.AutoMigrate(); err != nil {
-		log.Printf("Warning: Auto migration failed: %v", err)
-	}
-
-	if err := database.SeedData(); err != nil {
-		log.Printf("Warning: Seed data failed: %v", err)
-	}
-
 	app := fiber.New(fiber.Config{
 		ErrorHandler: func(c *fiber.Ctx, err error) error {
 			code := fiber.StatusInternalServerError
@@ -67,7 +59,7 @@ func main() {
 
 	userRepo := database.NewUserRepository()
 	database.NewRoleRepository()
-	userUseCase := usecases.NewUserUseCase(userRepo)
+	userUseCase := usecases.NewUserUseCase(userRepo, cfg)
 
 	userHandler := http.NewUserHandler(userUseCase)
 

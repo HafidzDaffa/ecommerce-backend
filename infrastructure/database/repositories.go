@@ -32,7 +32,11 @@ func (r *UserRepository) Update(user *entities.User) error {
 }
 
 func (r *UserRepository) Delete(id int64) error {
-	return DB.Delete(&entities.User{}, id).Error
+	var user entities.User
+	if err := DB.First(&user, id).Error; err != nil {
+		return err
+	}
+	return DB.Delete(&user).Error
 }
 
 func (r *UserRepository) List(offset, limit int) ([]*entities.User, error) {
