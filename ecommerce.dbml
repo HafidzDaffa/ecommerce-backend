@@ -1,16 +1,11 @@
-// E-commerce Database Schema
-// Created: 2026-01-05
+// --- EXISTING TABLES (Reference) ---
+// Users & Roles tetap sama seperti sebelumnya...
 
 Table roles {
   id int [pk, increment]
   name varchar(50) [unique, not null]
-  description varchar(255)
   created_at timestamp [default: `now()`]
   updated_at timestamp [default: `now()`]
-
-  Indexes {
-    (name) [name: 'idx_roles_name']
-  }
 }
 
 Table users {
@@ -19,31 +14,98 @@ Table users {
   password_hash varchar(255) [not null]
   full_name varchar(255) [not null]
   phone varchar(20)
-  avatar_url varchar(500)
-  gender enum
-  date_of_birth date
+  role_id int [ref: > roles.id]
   is_active boolean [default: true]
-  is_verified boolean [default: false]
-  verification_token varchar(255)
-  role_id int [ref: > roles.id, note: 'Foreign key to roles table']
-  reset_password_token varchar(255)
-  reset_password_expires datetime
-  last_login_at timestamp
+  created_at timestamp [default: `now()`]
+  updated_at timestamp [default: `now()`]
+  deleted_at timestamp
+}
+
+// --- UPDATED TABLES ---
+
+// 1. Categories Table 
+// (Hapus parent_id, struktur jadi flat)
+Table categories {
+  id int [pk, increment]
+  name varchar(100) [not null]
+  slug varchar(100) [unique, not null]
+  description text
+  image_url varchar(500)
+  is_active boolean [default: true]
   created_at timestamp [default: `now()`]
   updated_at timestamp [default: `now()`]
   deleted_at timestamp
 
   Indexes {
-    (email) [name: 'idx_users_email']
-    (phone) [name: 'idx_users_phone']
-    (is_active) [name: 'idx_users_is_active']
-    (is_verified) [name: 'idx_users_is_verified']
-    (created_at) [name: 'idx_users_created_at']
+    (slug) [name: 'idx_categories_slug']
+    (is_active) [name: 'idx_categories_active']
   }
 }
 
-Enum gender {
-  male
-  female
-  other
+// 2. Products Table
+// (Hapus category_id karena relasi dipindah ke pivot)
+Table products {
+  id bigint [pk, increment]
+  user_id bigint [ref: > users.id, note: 'Seller or Creator']
+  name varchar(255) [not null]
+  slug varchar(255) [unique, not null]
+  sku varchar(100) [unique, not null]
+  description text
+  short_description varchar(500)
+  price decimal(15, 2) [not null]
+  discount_price decimal(15, 2)
+  stock_quantity int [default: 0]
+  weight decimal(10, 2)
+  is_active boolean [default: true]
+  is_featured boolean [default: false]
+  status product_status [default: 'draft']
+  created_at timestamp [default: `now()`]
+  updated_at timestamp [default: `now()`]
+  deleted_at timestamp
+
+  Indexes {
+    (user_id) [name: 'idx_products_user']
+    (slug) [name: 'idx_products_slug']
+    (sku) [name: 'idx_products_sku']
+    (price) [name: 'idx_products_price']
+  }
+}
+
+// 3. Product Categories Pivot (NEW)
+// Menangani relasi Many-to-Many (1 Produk bisa banyak Kategori)
+Table product_categories {
+  product_id bigint [ref: > products.id]
+  category_id int [ref: > categories.id]
+  created_at timestamp [default: `now()`]
+
+  Indexes {
+    (product_id, category_id) [pk, note: 'Composite PK to prevent duplicates']
+    (category_id) [name: 'idx_prod_cat_category']
+  }
+}
+
+// 4. Tags Table (Tetap sama)
+Table tags {
+  id int [pk, increment]
+  name varchar(50) [not null]
+  slug varchar(50) [unique, not null]
+  created_at timestamp [default: `now()`]
+  updated_at timestamp [default: `now()`]
+}
+
+// 5. Product Tags Pivot (Tetap sama)
+Table product_tags {
+  product_id bigint [ref: > products.id]
+  tag_id int [ref: > tags.id]
+  
+  Indexes {
+    (product_id, tag_id) [pk]
+  }
+}
+
+Enum product_status {
+  draft
+  published
+  archived
+  out_of_stock
 }

@@ -12,6 +12,8 @@ func RunSeeders() error {
 	seeders := []Seeder{
 		&RoleSeeder{},
 		&AdminSeeder{},
+		&CategorySeeder{},
+		&TagSeeder{},
 	}
 
 	for _, seeder := range seeders {
